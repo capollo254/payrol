@@ -16,27 +16,6 @@ class Employee(models.Model):
     gross_salary = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     bank_account_number = models.CharField(max_length=50, blank=True, null=True)
     helb_monthly_deduction = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    
-    # New Relief Fields as per KRA PAYE document
-    monthly_insurance_premiums = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
-        default=Decimal('0.00'),
-        help_text="Monthly insurance premiums paid (life, health, education policies)"
-    )
-    monthly_medical_fund_contribution = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
-        default=Decimal('0.00'),
-        help_text="Monthly contribution to post-retirement medical fund"
-    )
-    monthly_mortgage_interest = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
-        default=Decimal('0.00'),
-        help_text="Monthly mortgage interest paid for residential property"
-    )
-    
     is_active = models.BooleanField(default=True)
     
     def full_name(self):

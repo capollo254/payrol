@@ -18,11 +18,6 @@ from apps.compliance.calc_nssf import calculate_nssf
 from apps.compliance.calc_shif import calculate_shif
 from apps.compliance.calc_ahl import calculate_ahl
 from apps.compliance.calc_overtime import calculate_overtime_pay
-from apps.compliance.calc_reliefs import (
-    calculate_insurance_relief,
-    calculate_post_retirement_medical_deduction,
-    calculate_mortgage_interest_relief
-)
 
 class PayrollRunViewSet(viewsets.ModelViewSet):
     serializer_class = PayrollRunSerializer
@@ -95,22 +90,12 @@ class PayrollRunViewSet(viewsets.ModelViewSet):
                 PENSION_MAX_RELIEF = Decimal('30000.00')
                 pension_deduction = min(pension_contributions.amount, PENSION_MAX_RELIEF)
 
-            # Calculate additional reliefs as per KRA PAYE document
-            medical_fund_deduction = calculate_post_retirement_medical_deduction(
-                employee.monthly_medical_fund_contribution
-            )
-            mortgage_interest_relief = calculate_mortgage_interest_relief(
-                employee.monthly_mortgage_interest
-            )
-
             # CORRECTED: Subtract all mandatory and allowable voluntary deductions from gross income
             taxable_income = total_gross_income - (
                 nssf_deduction + 
                 shif_deduction + 
                 ahl_employee_deduction + 
-                pension_deduction +
-                medical_fund_deduction +
-                mortgage_interest_relief
+                pension_deduction
             )
 
             # Ensure taxable income is not negative
@@ -118,18 +103,14 @@ class PayrollRunViewSet(viewsets.ModelViewSet):
 
             paye_tax = calculate_paye(taxable_income)
             
-            # Calculate insurance relief (reduces PAYE tax)
-            insurance_relief = calculate_insurance_relief(employee.monthly_insurance_premiums)
-            paye_tax_after_relief = max(paye_tax - insurance_relief, Decimal('0.00'))
-            
             # Calculate voluntary deductions (excluding pension as it's already accounted for in taxable income)
             voluntary_deductions_total = Decimal('0.00')
             voluntary_deductions = employee.voluntary_deductions.filter(is_active=True).exclude(deduction_type__icontains='pension')
             for deduction in voluntary_deductions:
                 voluntary_deductions_total += deduction.amount
 
-            # Total statutory deductions (using PAYE after insurance relief)
-            total_statutory_deductions = paye_tax_after_relief + nssf_deduction + shif_deduction + ahl_employee_deduction + helb_deduction
+            # Total statutory deductions
+            total_statutory_deductions = paye_tax + nssf_deduction + shif_deduction + ahl_employee_deduction + helb_deduction
             
             # Total deductions = statutory + voluntary (pension is already reflected in lower PAYE due to reduced taxable income)
             total_deductions = total_statutory_deductions + voluntary_deductions_total

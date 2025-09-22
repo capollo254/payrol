@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-my-super-secret-key-for-development'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver', '*']
+ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
@@ -133,23 +133,4 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3001", 
     "http://127.0.0.1:3001",
-]
-
-# Allow all origins during development (for file:// URLs)
-CORS_ALLOW_ALL_ORIGINS = True
-
-# Allow credentials to be sent with requests
-CORS_ALLOW_CREDENTIALS = True
-
-# Allow specific headers
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
 ]

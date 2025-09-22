@@ -42,18 +42,6 @@ OVERTIME_WEEKEND_MULTIPLIER = Decimal('2.0')
 
 # --- Other Constant Rates (if applicable) ---
 # ... you can add other rates here as needed, e.g., for pension schemes, etc.
-PENSION_MAX_RELIEF = Decimal('30000.00') # KRA rules - maximum pension relief per month
-
-# --- Insurance Relief ---
-# As per KRA PAYE document - 15% of premiums up to KSh 60,000 annually
-INSURANCE_RELIEF_RATE = Decimal('0.15') # 15% of premiums paid
-INSURANCE_RELIEF_MAX_ANNUAL = Decimal('60000.00') # Maximum KSh 60,000 per year
-INSURANCE_RELIEF_MAX_MONTHLY = Decimal('5000.00') # Maximum KSh 5,000 per month
-
-# --- Post-retirement Medical Fund ---
-# As per KRA PAYE document - contributions up to KSh 15,000 monthly
-POST_RETIREMENT_MEDICAL_MAX = Decimal('15000.00') # Maximum KSh 15,000 per month
-
-# --- Mortgage Interest Relief ---
-# As per KRA PAYE document - interest up to KSh 30,000 monthly
-MORTGAGE_INTEREST_MAX = Decimal('30000.00') # Maximum KSh 30,000 per month
+PENSION_MAX_RELIEF = Decimal('30000.00') # Example only, refer to current KRA rules.
+INSURANCE_RELIEF_RATE = Decimal('0.15') # 15% of premiums, capped at KSh 5,000 per month
+INSURANCE_RELIEF_MAX = Decimal('5000.00')

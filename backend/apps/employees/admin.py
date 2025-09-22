@@ -45,14 +45,6 @@ class EmployeeAdmin(admin.ModelAdmin):
         ('Payroll Information', {
             'fields': ('gross_salary', 'bank_account_number', 'helb_monthly_deduction')
         }),
-        ('KRA Tax Reliefs', {
-            'fields': (
-                'monthly_insurance_premiums',
-                'monthly_medical_fund_contribution', 
-                'monthly_mortgage_interest'
-            ),
-            'description': 'Tax reliefs as per KRA PAYE regulations. Insurance relief: 15% up to KSh 5,000/month. Medical fund: up to KSh 15,000/month. Mortgage interest: up to KSh 30,000/month.'
-        }),
     )
 
     @admin.display(description='Name')

@@ -13,11 +13,6 @@ from apps.compliance.calc_nssf import calculate_nssf
 from apps.compliance.calc_shif import calculate_shif
 from apps.compliance.calc_ahl import calculate_ahl
 from apps.compliance.calc_overtime import calculate_overtime_pay
-from apps.compliance.calc_reliefs import (
-    calculate_insurance_relief,
-    calculate_post_retirement_medical_deduction,
-    calculate_mortgage_interest_relief
-)
 
 @admin.register(PayrollRun)
 class PayrollRunAdmin(admin.ModelAdmin):
@@ -88,31 +83,17 @@ class PayrollRunAdmin(admin.ModelAdmin):
                 # Apply the tax-deductible cap of KES 30,000 per month for tax calculation
                 pension_relief_amount = min(pension_deduction, PENSION_MAX_RELIEF)
                 
-                # Calculate additional reliefs as per KRA PAYE document
-                medical_fund_deduction = calculate_post_retirement_medical_deduction(
-                    employee.monthly_medical_fund_contribution
-                )
-                mortgage_interest_relief = calculate_mortgage_interest_relief(
-                    employee.monthly_mortgage_interest
-                )
-                
                 # FIXED: Calculate taxable income (total gross - all pre-tax deductions)
-                # Include NSSF, SHIF, AHL, pension contributions (capped), medical fund, and mortgage interest
+                # Include NSSF, SHIF, AHL, and pension contributions (capped) as per Kenyan tax law
                 taxable_income = total_gross_income - (
                     nssf_deduction + 
                     shif_deduction + 
                     ahl_employee_deduction + 
-                    pension_relief_amount +
-                    medical_fund_deduction +
-                    mortgage_interest_relief
+                    pension_relief_amount
                 )
                 taxable_income = max(taxable_income, Decimal('0.00'))
                 
                 paye_tax = calculate_paye(taxable_income)
-                
-                # Calculate insurance relief (reduces PAYE tax)
-                insurance_relief = calculate_insurance_relief(employee.monthly_insurance_premiums)
-                paye_tax_after_relief = max(paye_tax - insurance_relief, Decimal('0.00'))
                 
                 # FIXED: Calculate voluntary deductions (excluding pension to avoid double counting)
                 # Pension is already deducted from taxable income, so don't include it again
@@ -121,7 +102,7 @@ class PayrollRunAdmin(admin.ModelAdmin):
                 for deduction in voluntary_deductions:
                     voluntary_deductions_total += deduction.amount
                 
-                total_statutory_deductions = paye_tax_after_relief + nssf_deduction + shif_deduction + ahl_employee_deduction + helb_deduction
+                total_statutory_deductions = paye_tax + nssf_deduction + shif_deduction + ahl_employee_deduction + helb_deduction
                 
                 # Total deductions = statutory + voluntary (excluding pension) + actual pension amount for display
                 # Note: Use full pension_deduction amount for total deductions, not the capped relief amount

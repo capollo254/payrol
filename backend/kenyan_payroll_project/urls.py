@@ -5,16 +5,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from apps.core.views import welcome
-from apps.payroll.calculator_views import public_payroll_calculator
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('welcome/', welcome, name='welcome'),
-    
-    # Public Calculator API (no authentication required)
-    path('api/public/calculator/', public_payroll_calculator, name='public_calculator'),
-    
-    # Authenticated API endpoints
     path('api/v1/auth/', include('apps.core.urls')),
     path('api/v1/employees/', include('apps.employees.urls')),
     path('api/v1/payroll/', include('apps.payroll.urls')),
